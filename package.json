@@ -1,0 +1,27 @@
+{
+  "name": "wonder-bs-sinon",
+  "version": "0.1.0",
+  "description": "BuckleScript bindings to the sinon",
+  "scripts": {
+    "build": "bsb -make-world",
+    "start": "bsb -make-world -w",
+    "test": "npm run build && jest",
+    "watch:bsb": "bsb -make-world -w",
+    "watch:jest": "jest --watchAll",
+    "watch:screen": "screen -c .screenrc"
+  },
+  "keywords": [
+    "wonder",
+    "sinon",
+    "bucklescript",
+    "test"
+  ],
+  "license": "MIT",
+  "devDependencies": {
+    "bs-platform": "^2.0.0"
+  },
+  "dependencies": {
+    "sinon": "^4.1.2",
+    "wonder-bs-jest": "^0.2.0"
+  }
+}
