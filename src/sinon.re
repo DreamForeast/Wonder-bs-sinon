@@ -93,8 +93,8 @@ let calledBefore = (actual: stub, expected: stub) =>
 let calledAfter = (actual: stub, expected: stub) =>
   Js.to_bool(stubToJsObj(actual)##calledAfter(stubToJsObj(expected)));
 
-let toCalledWith = (expectedArg: list('a), expect: Expect.partial('a)) =>
-  ExpectSinon.toCalledWith(Array.of_list(expectedArg)) @@ expect;
+let toCalledWith = (expectedArg: list('a), expect) =>
+  ExpectSinon.toCalledWith(Array.of_list(expectedArg)) @@ Obj.magic(expect);
 
 let toCalledBefore = (expectedArg: 'b, expect: Expect.partial('a)) =>
   ExpectSinon.toCalledBefore(expectedArg) @@ expect;
