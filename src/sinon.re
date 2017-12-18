@@ -43,7 +43,7 @@ external callToJsObj : call => Js.t({..}) = "%identity";
 
 external jsObjToCall : Js.t({..}) => call = "%identity";
 
-let createMethodStub: (sandbox, obj, string) => stub = [%bs.raw
+let createMethodStub = [%bs.raw
   {| function(sandbox, obj, method) {
     sandbox.stub(obj, method);
 

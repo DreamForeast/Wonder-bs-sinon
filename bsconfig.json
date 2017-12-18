@@ -14,5 +14,8 @@
   "bs-dependencies": [
     "wonder-bs-jest"
   ],
-  "refmt": 3
+  "refmt": 3,
+  "package-specs": [
+    "es6-global"
+  ]
 }

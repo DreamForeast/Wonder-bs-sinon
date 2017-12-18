@@ -1,158 +1,152 @@
-open Wonder_Jest;
+open Wonder_jest;
 
 let _ =
-  describe
-    "test sinon"
-    (
-      fun () => {
-        open Expect;
-        open! Expect.Operators;
-        open Sinon;
-        let sandbox = getSandboxDefaultVal ();
-        beforeAll (fun () => sandbox := createSandbox ());
-        afterAll (fun () => restoreSandbox !sandbox);
-        test
-          "test1"
-          (
-            fun () => {
-              let stub = createEmptyStub !sandbox;
-              let func f => f (1, 2);
-              func stub;
-              getCall stub 0 |> getArgsFromEmptyStub |> expect == [1, 2]
-            }
-          );
-        test
-          "test2"
-          (
-            fun () => {
-              let obj = {"func": fun x y => x + y};
-              /* let obj  = {
-                   pub func x => {
-                     x + 1;
-                   };
-                 }; */
-              let stub = createMethodStub !sandbox obj "func";
+  describe(
+    "test sinon",
+    () => {
+      open Expect;
+      open Expect.Operators;
+      open Sinon;
+      let sandbox = getSandboxDefaultVal();
+      beforeEach(() => sandbox := createSandbox());
+      afterEach(() => restoreSandbox(refJsObjToSandbox(sandbox^)));
+      test(
+        "test1",
+        () => {
+          let stub = createEmptyStubWithJsObjSandbox(sandbox);
+          let func = (f) => [@bs] f(1, 2);
+          func(stub);
+          stub |> getCall(0) |> getArgsFromEmptyStub |> expect == [1, 2]
+        }
+      );
+      test(
+        "test2",
+        () => {
+          let obj = {"func": (x, y) => x + y};
+          let stub = createMethodStub(sandbox^, obj, "func");
+          let func = obj##func;
+          func(1, 2);
+          stub |> getCall(0) |> getArgs |> expect == [1, 2]
+        }
+      );
+      test(
+        "test withOneArg",
+        () => {
+          let stub = createEmptyStubWithJsObjSandbox(sandbox);
+          stub |> withOneArg(1) |> returns(10);
+          stub |> withOneArg(2) |> returns(20);
+          (stub(1), stub(2)) |> expect == (10, 20)
+        }
+      );
+      test(
+        "test onCall,getCall",
+        () => {
+          let stub = createEmptyStubWithJsObjSandbox(sandbox);
+          stub |> onCall(0) |> returns(10);
+          stub |> onCall(1) |> returns(20);
+          let v1 = [@bs] stub();
+          let v2 = [@bs] stub(1, 2, "aaa");
+          (v1, v2, stub |> getCall(1) |> getArgs) |> expect == (10, 20, [1, 2, "aaa" |> Obj.magic])
+        }
+      );
+      describe(
+        "test extended sinon matcher for jest",
+        () => {
+          test(
+            "test toCalledWith",
+            () => {
+              let obj = {"func": (x, y) => x + y};
+              let stub = createMethodStub(sandbox^, obj, "func");
               let func = obj##func;
-              func 1 2;
-              getCall stub 0 |> getArgs |> expect == [1, 2]
+              func(1, 2);
+              stub |> getCall(0) |> expect |> not_ |> toCalledWith([2, 2])
             }
           );
-        describe
-          "test extended sinon matcher for jest"
-          (
-            fun () => {
-              test
-                "test toCalledWith"
-                (
-                  fun () => {
-                    let obj = {"func": fun x y => x + y};
-                    let stub = createMethodStub !sandbox obj "func";
-                    let func = obj##func;
-                    func 1 2;
-                    /* getCall stub 0 |> expect |> toCalledWith [1, 2]; */
-                    getCall stub 0 |> expect |> not_ |> toCalledWith [2, 2]
-                  }
-                );
-              test
-                "test toCalledBefore"
-                (
-                  fun () => {
-                    let obj = {"func1": fun x y => x + y, "func2": fun x y => x - y};
-                    let stub1 = createMethodStub !sandbox obj "func1";
-                    let stub2 = createMethodStub !sandbox obj "func2";
-                    let func = obj##func1;
-                    func 1 2;
-                    /* expect stub1 |> not_ |> toCalledBefore stub2; */
-                    let func = obj##func2;
-                    func 2 3;
-                    expect stub1 |> toCalledBefore stub2
-                  }
-                );
-              test
-                "test toCalledAfter"
-                (
-                  fun () => {
-                    let obj = {"func1": fun x y => x + y, "func2": fun x y => x - y};
-                    let stub1 = createMethodStub !sandbox obj "func1";
-                    let stub2 = createMethodStub !sandbox obj "func2";
-                    let func = obj##func1;
-                    func 1 2;
-                    /* expect stub2 |> not_ |> toCalledAfter stub1; */
-                    let func = obj##func2;
-                    func 2 3;
-                    expect stub2 |> toCalledAfter stub1
-                  }
-                );
-              test
-                "test toCalled"
-                (
-                  fun () => {
-                    let obj = {"func1": fun x y => x + y};
-                    let stub1 = createMethodStub !sandbox obj "func1";
-                    let func = obj##func1;
-                    /* expect stub1 |> not_ |> toCalled; */
-                    func 1 2;
-                    expect stub1 |> toCalled
-                  }
-                );
-              test
-                "test toCalledOnce"
-                (
-                  fun () => {
-                    let obj = {"func1": fun x y => x + y};
-                    let stub1 = createMethodStub !sandbox obj "func1";
-                    let func = obj##func1;
-                    func 1 2;
-                    /* expect stub1 |> toCalledOnce; */
-                    func 2 2;
-                    expect stub1 |> not_ |> toCalledOnce
-                  }
-                );
-              test
-                "test toCalledTwice"
-                (
-                  fun () => {
-                    let obj = {"func1": fun x y => x + y};
-                    let stub1 = createMethodStub !sandbox obj "func1";
-                    let func = obj##func1;
-                    func 1 2;
-                    /* expect stub1 |> not_ |> toCalledTwice; */
-                    func 2 2;
-                    expect stub1 |> toCalledTwice
-                  }
-                );
-              test
-                "test toCalledThrice"
-                (
-                  fun () => {
-                    let obj = {"func1": fun x y => x + y};
-                    let stub1 = createMethodStub !sandbox obj "func1";
-                    let func = obj##func1;
-                    func 1 2;
-                    /* expect stub1 |> not_ |> toCalledThrice; */
-                    func 2 2;
-                    /* expect stub1 |> not_ |> toCalledThrice; */
-                    func 3 2;
-                    expect stub1 |> toCalledThrice
-                  }
-                );
-              test
-                "test getCallCount"
-                (
-                  fun () => {
-                    let obj = {"func1": fun x y => x + y, "func2": fun x y => x - y};
-                    let stub1 = createMethodStub !sandbox obj "func1";
-                    let stub2 = createMethodStub !sandbox obj "func2";
-                    let func = obj##func1;
-                    func 1 2;
-                    func 2 2;
-                    let func = obj##func2;
-                    func 2 3;
-                    /* getCallCount stub1 |> expect == 2; */
-                    getCallCount stub2 |> expect == 1
-                  }
-                )
+          test(
+            "test toCalledBefore",
+            () => {
+              let obj = {"func1": (x, y) => x + y, "func2": (x, y) => x - y};
+              let stub1 = createMethodStub(sandbox^, obj, "func1");
+              let stub2 = createMethodStub(sandbox^, obj, "func2");
+              let func = obj##func1;
+              func(1, 2);
+              let func = obj##func2;
+              func(2, 3);
+              stub1 |> expect |> toCalledBefore(stub2)
+            }
+          );
+          test(
+            "test toCalledAfter",
+            () => {
+              let obj = {"func1": (x, y) => x + y, "func2": (x, y) => x - y};
+              let stub1 = createMethodStub(sandbox^, obj, "func1");
+              let stub2 = createMethodStub(sandbox^, obj, "func2");
+              let func = obj##func1;
+              func(1, 2);
+              let func = obj##func2;
+              func(2, 3);
+              stub2 |> expect |> toCalledAfter(stub1)
+            }
+          );
+          test(
+            "test toCalled",
+            () => {
+              let obj = {"func1": (x, y) => x + y};
+              let stub1 = createMethodStub(sandbox^, obj, "func1");
+              let func = obj##func1;
+              func(1, 2);
+              stub1 |> expect |> toCalled
+            }
+          );
+          test(
+            "test toCalledOnce",
+            () => {
+              let obj = {"func1": (x, y) => x + y};
+              let stub1 = createMethodStub(sandbox^, obj, "func1");
+              let func = obj##func1;
+              func(1, 2);
+              func(2, 2);
+              stub1 |> expect |> not_ |> toCalledOnce
+            }
+          );
+          test(
+            "test toCalledTwice",
+            () => {
+              let obj = {"func1": (x, y) => x + y};
+              let stub1 = createMethodStub(sandbox^, obj, "func1");
+              let func = obj##func1;
+              func(1, 2);
+              func(2, 2);
+              stub1 |> expect |> toCalledTwice
+            }
+          );
+          test(
+            "test toCalledThrice",
+            () => {
+              let obj = {"func1": (x, y) => x + y};
+              let stub1 = createMethodStub(sandbox^, obj, "func1");
+              let func = obj##func1;
+              func(1, 2);
+              func(2, 2);
+              func(3, 2);
+              stub1 |> expect |> toCalledThrice
+            }
+          );
+          test(
+            "test getCallCount",
+            () => {
+              let obj = {"func1": (x, y) => x + y, "func2": (x, y) => x - y};
+              let stub1 = createMethodStub(sandbox^, obj, "func1");
+              let stub2 = createMethodStub(sandbox^, obj, "func2");
+              let func = obj##func1;
+              func(1, 2);
+              func(2, 2);
+              let func = obj##func2;
+              func(2, 3);
+              stub2 |> getCallCount |> expect == 1
             }
           )
-      }
-    );
+        }
+      )
+    }
+  );
