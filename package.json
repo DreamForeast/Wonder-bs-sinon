@@ -23,6 +23,6 @@
   },
   "dependencies": {
     "sinon": "^4.1.2",
-    "wonder-bs-jest": "latest"
+    "wonder-bs-jest": "^0.2.6"
   }
 }
