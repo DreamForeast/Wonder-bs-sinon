@@ -1,6 +1,6 @@
 {
   "name": "wonder-bs-sinon",
-  "version": "0.1.4",
+  "version": "0.1.5",
   "description": "BuckleScript bindings to the sinon",
   "scripts": {
     "watch": "bsb -clean-world -make-world -w",
@@ -23,6 +23,6 @@
   },
   "dependencies": {
     "sinon": "^4.1.2",
-    "wonder-bs-jest": "^0.2.6"
+    "wonder-bs-jest": "latest"
   }
 }
