@@ -59,7 +59,7 @@ let _ =
               let stub = createMethodStub(sandbox^, obj, "func");
               let func = obj##func;
               func(1, 2);
-              stub |> getCall(0) |> expect |> not_ |> toCalledWith([2, 2])
+              stub |> getCall(0) |> expect |> not_ |> toCalledWith([|2, 2|])
             }
           );
           test(
