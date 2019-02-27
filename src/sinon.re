@@ -104,20 +104,20 @@ let calledAfter = (actual: stub, expected: stub) =>
 let toCalledWith = (expectedArg: array('a), expect) =>
   ExpectSinon.toCalledWith(expectedArg) @@ Obj.magic(expect);
 
-let toCalledBefore = (expectedArg: 'b, expect: Expect.partial('a)) =>
+let toCalledBefore = (expectedArg: 'b, expect) =>
   ExpectSinon.toCalledBefore(expectedArg) @@ expect;
 
-let toCalledAfter = (expectedArg: 'b, expect: Expect.partial('a)) =>
+let toCalledAfter = (expectedArg: 'b, expect) =>
   ExpectSinon.toCalledAfter(expectedArg) @@ expect;
 
-let toCalled = (expect: Expect.partial('a)) =>
+let toCalled = (expect) =>
   ExpectSinon.toCalled @@ expect;
 
-let toCalledOnce = (expect: Expect.partial('a)) =>
+let toCalledOnce = (expect) =>
   ExpectSinon.toCalledOnce @@ expect;
 
-let toCalledTwice = (expect: Expect.partial('a)) =>
+let toCalledTwice = (expect) =>
   ExpectSinon.toCalledTwice @@ expect;
 
-let toCalledThrice = (expect: Expect.partial('a)) =>
+let toCalledThrice = (expect) =>
   ExpectSinon.toCalledThrice @@ expect;
