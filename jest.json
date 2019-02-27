@@ -7,7 +7,7 @@
     "transformIgnorePatterns": [
       "<rootDir>/node_modules/(?!(.*bs-)|wonder-commonlib)"
     ],
-    "setupTestFrameworkScriptFile": "<rootDir>/test/helper/jest/specHelper.js",
+    "setupFilesAfterEnv": ["<rootDir>/test/helper/jest/specHelper.js"],
     "notify": false,
     "verbose": true
   }

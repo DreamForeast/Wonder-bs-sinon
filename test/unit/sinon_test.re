@@ -25,7 +25,7 @@ let _ =
       let stub = createEmptyStubWithJsObjSandbox(sandbox);
       stub |> withOneArg(1) |> returns(10);
       stub |> withOneArg(2) |> returns(20);
-      (stub(1), stub(2)) |> expect == (10, 20);
+      (stub(. 1), stub(. 2)) |> expect == (10, 20);
     });
     test("test onCall,getCall", () => {
       let stub = createEmptyStubWithJsObjSandbox(sandbox);
